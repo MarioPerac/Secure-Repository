@@ -2,7 +2,6 @@ package repository;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -120,7 +119,7 @@ public class SecureRepository {
         for (int i = 0; i < listOfFilesContenet.size(); i++) {
             try {
                 String dir = destDir + File.separator + i;
-                String file = dir + File.separator + "data.bin";
+                String file = dir + File.separator + "data.txt";
                 Path filePath = Paths.get(file);
                 Files.createDirectories(Paths.get(dir));
                 Files.createFile(filePath);
@@ -156,7 +155,7 @@ public class SecureRepository {
             String content = OpenSSL.fileDecryption(innerDir + File.separator + "data.enc",
                     privateKeyFile);
 
-            String newFile = innerDir + File.separator + ".file.bin";
+            String newFile = innerDir + File.separator + ".file.txt";
             Path newFilePath = Paths.get(newFile);
             try {
                 Files.createFile(newFilePath);

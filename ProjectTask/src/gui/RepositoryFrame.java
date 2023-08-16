@@ -69,20 +69,21 @@ public class RepositoryFrame extends JFrame {
                 int result = fileChooser.showOpenDialog(fileChooserFrame);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     selectedFile = fileChooser.getSelectedFile();
-                    fileLabel.setText(selectedFile.getAbsolutePath());
+                    chooseButton.setText("SELECTED");
                 }
             }
         });
         uploadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                fileLabel.setText("Successful upload.");
+
                 if (selectedFile != null) {
                     SecureRepository.uploadFile(selectedFile.getAbsolutePath(), username);
                     repositoryTableModel.addRow(new String[]{Integer.toString(nextFileNumber), selectedFile.getName()});
+                    comboBox.addItem(nextFileNumber);
                     nextFileNumber++;
-                } else
-                    fileLabel.setText("Nothing selected.");
+                    fileLabel.setText("Successful upload.");
+                }
             }
         });
         downloadButton.addActionListener(new ActionListener() {
@@ -98,4 +99,6 @@ public class RepositoryFrame extends JFrame {
             }
         });
     }
+
+
 }

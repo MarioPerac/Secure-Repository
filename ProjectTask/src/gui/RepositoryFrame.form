@@ -48,7 +48,7 @@
         </constraints>
         <properties>
           <foreground color="-16777216"/>
-          <text value="Nothing selected."/>
+          <text value=""/>
         </properties>
       </component>
       <component id="7281c" class="javax.swing.JButton" binding="uploadButton">
@@ -88,7 +88,10 @@
             <preferred-size width="150" height="50"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <font size="14"/>
+          <foreground color="-16777216"/>
+        </properties>
       </component>
       <component id="efc00" class="javax.swing.JButton" binding="downloadButton">
         <constraints>
