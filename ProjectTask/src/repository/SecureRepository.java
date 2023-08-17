@@ -12,6 +12,9 @@ import java.util.Random;
 
 import openssl.OpenSSL;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+
 public class SecureRepository {
     private static String USERS_LOCAL_DIR = "UsersLocalRepo";
     private static String USERS_DIR = "users";
@@ -134,6 +137,7 @@ public class SecureRepository {
 
                 OpenSSL.digestSHA256WithRSA(dir, file, privateKeyFile);
                 String encFile = dir + File.separator + "data.enc";
+
                 OpenSSL.fileEncryptionRSA(file, encFile, publicKeyFile);
                 Files.delete(filePath);
 
@@ -178,4 +182,11 @@ public class SecureRepository {
         return fileContent;
     }
 
+    private static String generateRandomKey() {
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] randomBytes = new byte[32];
+        secureRandom.nextBytes(randomBytes);
+
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+    }
 }

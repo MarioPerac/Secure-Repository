@@ -93,6 +93,7 @@ public class OpenSSL {
 
     }
 
+
     public static String fileDecryptionRSA(String file, String privateKey) {
         String result = null;
         String[] command = {
@@ -108,6 +109,49 @@ public class OpenSSL {
         try {
             result = executeCommandWithResult(command);
 
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return result;
+    }
+
+    public static void fileEncryptionAES256(String file, String encFile, String key) {
+        String[] command = {
+                "openssl",
+                "aes256",
+                "-in",
+                file,
+                "-out",
+                encFile,
+                "-k",
+                key,
+                "-base64"
+        };
+
+        try {
+            executeCommand(command);
+
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+    }
+
+    public static String fileDecryptionAES256(String file, String key) {
+        String result = null;
+        String[] command = {
+                "openssl",
+                "aes256",
+                "-d",
+                "-in",
+                file,
+                "-k",
+                key,
+                "-base64",
+        };
+
+        try {
+            result = executeCommandWithResult(command);
         } catch (Exception e) {
             System.err.println(e);
         }
