@@ -16,9 +16,6 @@ public class SignInFrame extends JFrame {
     private JButton chooseButton;
     private JButton signUpButton;
     private JTextArea errorArea;
-    private JLabel errorLabel;
-    private JLabel choosedFileLabel;
-    private JPanel dropPanel;
     private File selectedFile;
     private int SIGN_IN_ATTEMPTS = 3;
     private int REACTIVATE_ATTEMPTS = 1;
@@ -87,6 +84,7 @@ public class SignInFrame extends JFrame {
 
                     errorArea.setText("You can not reactivate your certificate,\n please create a new account.");
                     SignIn.removeUserAccount(username);
+                    REACTIVATE_ATTEMPTS--;
                 }
 
             }
