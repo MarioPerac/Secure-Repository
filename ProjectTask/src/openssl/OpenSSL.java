@@ -225,8 +225,8 @@ public class OpenSSL {
                 "openssl",
                 "ca",
                 "-gencrl",
-                "-out",
-                CRL
+                "-config", CONFIG_PATH,
+                "-out", CRL
         };
 
         try {
@@ -375,16 +375,16 @@ public class OpenSSL {
     private static void executeCommand(String[] commandOptions) throws Exception {
 
         Process process = Runtime.getRuntime().exec(commandOptions);
-        //od ove linije izbaciti
-        InputStream errorStream = process.getErrorStream();
-        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
 
-        String errorLine;
-        while ((errorLine = errorReader.readLine()) != null) {
-            System.err.println(errorLine);  // Error output from OpenSSL command
-        }
-        errorReader.close();
-        //do ove linije izbaciti
+//        InputStream errorStream = process.getErrorStream();
+//        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
+//
+//        String errorLine;
+//        while ((errorLine = errorReader.readLine()) != null) {
+//            System.err.println(errorLine);  // Error output from OpenSSL command
+//        }
+//        errorReader.close();
+
         int exitCode = process.waitFor();
 
         if (exitCode != 0) {

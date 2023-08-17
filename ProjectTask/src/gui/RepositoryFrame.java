@@ -79,6 +79,7 @@ public class RepositoryFrame extends JFrame {
 
                 if (selectedFile != null) {
                     SecureRepository.uploadFile(selectedFile.getAbsolutePath(), username);
+                    filesNames.add(selectedFile.getName());
                     repositoryTableModel.addRow(new String[]{Integer.toString(nextFileNumber), selectedFile.getName()});
                     comboBox.addItem(Integer.toString(nextFileNumber));
                     nextFileNumber++;
@@ -93,7 +94,7 @@ public class RepositoryFrame extends JFrame {
                 String fileName = filesNames.get(Integer.valueOf((String) comboBox.getSelectedItem()));
                 try {
                     SecureRepository.downloadFile(username, fileName);
-                    downloadErrorLabel.setText("Successful download.");
+                    downloadErrorLabel.setText("Successful download file: " + fileName);
                 } catch (Exception e) {
                     downloadErrorLabel.setText(e.getMessage());
                 }

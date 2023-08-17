@@ -38,8 +38,8 @@ public class SecureRepository {
     }
 
     public static void downloadFile(String username, String fileName) throws Exception {
-        String folderNmame = fileName.replace('.', REPLACEMENT_CHAR);
-        String userDir = USERS_DIR + File.separator + username + File.separator + folderNmame;
+        String folderName = fileName.replace('.', REPLACEMENT_CHAR);
+        String userDir = USERS_DIR + File.separator + username + File.separator + folderName;
         String privateKey = USERS_LOCAL_DIR + File.separator + username + File.separator + "private.key";
         String publicKey = USERS_LOCAL_DIR + File.separator + username + File.separator + "public.key";
         List<String> fileContent = mergeFilesFromSeparateDir(userDir, privateKey, publicKey);
@@ -49,7 +49,7 @@ public class SecureRepository {
         Files.createFile(downloadFilePath);
         boolean start = true;
         for (String line : fileContent) {
-            if (!start) {
+            if (!start && !line.isEmpty()) {
                 Files.writeString(downloadFilePath, "\n", StandardOpenOption.APPEND);
             } else
                 start = false;
@@ -99,18 +99,22 @@ public class SecureRepository {
 
         int currentLine = 0;
 
+
         for (int i = 0; i < numFiles; i++) {
             for (int j = 0; j < linesPerFile; j++) {
                 if (currentLine < fileDataSize) {
                     splittedFileLines.get(i).add(fileData.get(currentLine));
+
                     currentLine++;
                 } else
                     break;
             }
         }
 
-        for (int i = currentLine; i < fileDataSize; i++)
+        for (int i = currentLine; i < fileDataSize; i++) {
             splittedFileLines.get(splittedFileLines.size() - 1).add(fileData.get(i));
+
+        }
 
         return splittedFileLines;
     }
@@ -122,23 +126,25 @@ public class SecureRepository {
         for (int i = 0; i < listOfFilesContenet.size(); i++) {
             try {
                 String dir = destDir + File.separator + i;
-                String file = dir + File.separator + "data.txt";
+                String file = dir + File.separator + "tmp.txt";
                 Path filePath = Paths.get(file);
                 Files.createDirectories(Paths.get(dir));
                 Files.createFile(filePath);
                 boolean start = true;
                 for (String line : listOfFilesContenet.get(i)) {
-                    if (!start)
-                        Files.writeString(filePath, "\n", StandardOpenOption.APPEND);
-                    else
-                        start = false;
                     Files.writeString(filePath, line, StandardOpenOption.APPEND);
                 }
 
-                OpenSSL.digestSHA256WithRSA(dir, file, privateKeyFile);
-                String encFile = dir + File.separator + "data.enc";
 
-                OpenSSL.fileEncryptionRSA(file, encFile, publicKeyFile);
+                OpenSSL.digestSHA256WithRSA(dir, file, privateKeyFile);
+
+                String encFile = dir + File.separator + "data.enc";
+                String encKey = dir + File.separator + "key.enc";
+                String key = generateRandomKey();
+                OpenSSL.fileEncryptionAES256(file, encFile, key);
+
+                Files.writeString(filePath, key);
+                OpenSSL.fileEncryptionRSA(file, encKey, publicKeyFile);
                 Files.delete(filePath);
 
             } catch (IOException e) {
@@ -156,20 +162,19 @@ public class SecureRepository {
 
         while (Files.exists(Paths.get(dir + File.separator + dirNum))) {
             String innerDir = dir + File.separator + dirNum;
-            String content = OpenSSL.fileDecryptionRSA(innerDir + File.separator + "data.enc",
+            String key = OpenSSL.fileDecryptionRSA(innerDir + File.separator + "key.enc",
                     privateKeyFile);
-
-            String newFile = innerDir + File.separator + ".file.txt";
+            String content = OpenSSL.fileDecryptionAES256(innerDir + File.separator + "data.enc", key);
+            String newFile = innerDir + File.separator + "tmp.txt";
             Path newFilePath = Paths.get(newFile);
             try {
                 Files.createFile(newFilePath);
                 Files.writeString(newFilePath, content);
 
                 if (OpenSSL.checkSignature(publicKeyFile, innerDir + File.separator + "signature.txt", newFile)) {
-                    if (!content.trim().isEmpty())
-                        fileContent.add(content);
+                    fileContent.add(content);
                 } else
-                    throw new Exception("The file (" + newFile + ") is corrupted!!!");
+                    throw new Exception("The file is CORRUPTED!!!");
             } catch (IOException e) {
                 System.err.println(e);
             } finally {

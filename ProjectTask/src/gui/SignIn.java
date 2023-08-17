@@ -49,7 +49,7 @@ public class SignIn {
             Files.createFile(tmpFile);
             boolean start = true;
             for (String line : fileContent) {
-                String newLine = null;
+                String newLine = line;
                 if (line.contains(userEmail)) {
                     String lineParams[] = line.split("\\s+");
                     newLine = "V" + line.substring(1);
@@ -67,6 +67,7 @@ public class SignIn {
         } catch (Exception e) {
             System.err.println(e);
         }
+        OpenSSL.generateCRL();
 
     }
 
@@ -114,9 +115,10 @@ public class SignIn {
             Files.walk(directory)
                     .forEach(path -> {
                         try {
+
                             Files.delete(path);
                         } catch (IOException e) {
-                            System.err.println("Error deleting file " + path + ": " + e.getMessage());
+                            System.err.println(e);
                         }
                     });
         } else {

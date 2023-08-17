@@ -15,6 +15,7 @@ public class SignInFrame extends JFrame {
     private JLabel certificateLabel;
     private JButton chooseButton;
     private JButton signUpButton;
+    private JTextArea errorArea;
     private JLabel errorLabel;
     private JLabel choosedFileLabel;
     private JPanel dropPanel;
@@ -69,13 +70,13 @@ public class SignInFrame extends JFrame {
 
 
                 } catch (Exception e) {
-                    errorLabel.setText(e.getMessage());
+                    errorArea.setText(e.getMessage());
                     SIGN_IN_ATTEMPTS--;
                 }
 
                 if (SIGN_IN_ATTEMPTS == 0 && REACTIVATE_ATTEMPTS > 0) {
                     SignIn.suspendUserCertificate(username);
-                    errorLabel.setText("Your certificate has been SUSPENDED! \n" +
+                    errorArea.setText("Your certificate has been SUSPENDED! \n" +
                             "You have one attempt to REACTIVATE it \n" +
                             " or create a new account!");
                     SIGN_IN_ATTEMPTS++;
@@ -84,8 +85,8 @@ public class SignInFrame extends JFrame {
                     SignIn.reactivateUserCertificate(username);
                 } else if (REACTIVATE_ATTEMPTS == 0) {
 
-                    errorLabel.setText("You can not reactivate your certificate,\n please create a new account.");
-                    //obrisi korisnika
+                    errorArea.setText("You can not reactivate your certificate,\n please create a new account.");
+                    SignIn.removeUserAccount(username);
                 }
 
             }
