@@ -134,7 +134,7 @@ public class SecureRepository {
 
                 OpenSSL.digestSHA256WithRSA(dir, file, privateKeyFile);
                 String encFile = dir + File.separator + "data.enc";
-                OpenSSL.fileEncryption(file, encFile, publicKeyFile);
+                OpenSSL.fileEncryptionRSA(file, encFile, publicKeyFile);
                 Files.delete(filePath);
 
             } catch (IOException e) {
@@ -152,7 +152,7 @@ public class SecureRepository {
 
         while (Files.exists(Paths.get(dir + File.separator + dirNum))) {
             String innerDir = dir + File.separator + dirNum;
-            String content = OpenSSL.fileDecryption(innerDir + File.separator + "data.enc",
+            String content = OpenSSL.fileDecryptionRSA(innerDir + File.separator + "data.enc",
                     privateKeyFile);
 
             String newFile = innerDir + File.separator + ".file.txt";

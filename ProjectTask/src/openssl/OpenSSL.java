@@ -11,8 +11,8 @@ public class OpenSSL {
 
     private static String CONFIG_PATH = "CA" + File.separator + "openssl.cnf";
     private static String REQ_PATH = "CA" + File.separator + "requests";
-    private static String CERT_PATH = "CA" + File.separator + "certs";
     private static String USERS_LOCAL = "UsersLocalRepo";
+    private static String CRL = "CA" + File.separator + "crl" + File.separator + "list.pem";
     private static String DAYS = "182";
 
     private static String createRequest(User user, String keyPath) {
@@ -70,7 +70,7 @@ public class OpenSSL {
         }
     }
 
-    public static void fileEncryption(String file, String encFile, String publicKey) {
+    public static void fileEncryptionRSA(String file, String encFile, String publicKey) {
         String[] command = {
                 "openssl",
                 "pkeyutl",
@@ -93,7 +93,7 @@ public class OpenSSL {
 
     }
 
-    public static String fileDecryption(String file, String privateKey) {
+    public static String fileDecryptionRSA(String file, String privateKey) {
         String result = null;
         String[] command = {
                 "openssl",
@@ -176,9 +176,42 @@ public class OpenSSL {
         }
     }
 
-    // To doo
-    public static void reactivateCertificate(String username) {
+    public static void generateCRL() {
+        String[] command = {
+                "openssl",
+                "ca",
+                "-gencrl",
+                "-out",
+                CRL
+        };
 
+        try {
+            executeCommand(command);
+
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+    }
+
+    public static String getSubjectInfo(String certificate) {
+        String result = null;
+
+        String[] command = {
+                "openssl",
+                "x509",
+                "-in",
+                certificate,
+                "-noout",
+                "-subject"
+        };
+
+        try {
+            result = executeCommandWithResult(command);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        return result;
     }
 
     public static void digestSHA256WithRSA(String digestPath, String filePath, String privateKeyFile) {

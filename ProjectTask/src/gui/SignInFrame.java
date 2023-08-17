@@ -19,6 +19,8 @@ public class SignInFrame extends JFrame {
     private JLabel choosedFileLabel;
     private JPanel dropPanel;
     private File selectedFile;
+    private int SIGN_IN_ATTEMPTS = 3;
+    private int REACTIVATE_ATTEMPTS = 1;
 
 
     public SignInFrame() {
@@ -59,13 +61,33 @@ public class SignInFrame extends JFrame {
                 String password = passwordField.getText();
                 RepositoryFrame repositoryFrame = null;
                 try {
-                    if (SignIn.checkUser(certificate, username, password)) {
+
+                    if (SIGN_IN_ATTEMPTS > 0 && SignIn.checkUser(certificate, username, password)) {
                         repositoryFrame = new RepositoryFrame(username);
                         dispose();
                     }
+
+
                 } catch (Exception e) {
                     errorLabel.setText(e.getMessage());
+                    SIGN_IN_ATTEMPTS--;
                 }
+
+                if (SIGN_IN_ATTEMPTS == 0 && REACTIVATE_ATTEMPTS > 0) {
+                    SignIn.suspendUserCertificate(username);
+                    errorLabel.setText("Your certificate has been SUSPENDED! \n" +
+                            "You have one attempt to REACTIVATE it \n" +
+                            " or create a new account!");
+                    SIGN_IN_ATTEMPTS++;
+                    REACTIVATE_ATTEMPTS--;
+                } else if (SIGN_IN_ATTEMPTS == 1 && REACTIVATE_ATTEMPTS == 0) {
+                    SignIn.reactivateUserCertificate(username);
+                } else if (REACTIVATE_ATTEMPTS == 0) {
+
+                    errorLabel.setText("You can not reactivate your certificate,\n please create a new account.");
+                    //obrisi korisnika
+                }
+
             }
         });
     }
