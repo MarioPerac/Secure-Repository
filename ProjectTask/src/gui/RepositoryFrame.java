@@ -94,7 +94,7 @@ public class RepositoryFrame extends JFrame {
                 String fileName = filesNames.get(Integer.valueOf((String) comboBox.getSelectedItem()));
                 try {
                     SecureRepository.downloadFile(username, fileName);
-                    downloadErrorLabel.setText("Successful download file: " + fileName);
+                    downloadErrorLabel.setText("Successful download: " + fileName);
                 } catch (Exception e) {
                     downloadErrorLabel.setText(e.getMessage());
                 }

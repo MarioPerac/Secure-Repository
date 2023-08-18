@@ -55,11 +55,8 @@ public class SignIn {
                     newLine = newLine.replace(lineParams[2], "");
 
                 }
-                if (!start) {
-                    Files.writeString(tmpFile, "\n", StandardOpenOption.APPEND);
-                } else
-                    start = false;
-                Files.writeString(tmpFile, newLine, StandardOpenOption.APPEND);
+
+                Files.writeString(tmpFile, newLine + "\n", StandardOpenOption.APPEND);
             }
             Files.delete(indexPath);
             Files.move(tmpFile, indexPath);

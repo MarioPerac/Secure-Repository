@@ -67,8 +67,8 @@ public class SignInFrame extends JFrame {
 
 
                 } catch (Exception e) {
-                    errorArea.setText(e.getMessage());
                     SIGN_IN_ATTEMPTS--;
+                    errorArea.setText(e.getMessage() + "\n" + "You have :" + SIGN_IN_ATTEMPTS + " more attempts");
                 }
 
                 if (SIGN_IN_ATTEMPTS == 0 && REACTIVATE_ATTEMPTS > 0) {
